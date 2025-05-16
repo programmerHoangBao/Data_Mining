@@ -109,7 +109,7 @@ def create_gui(df, prior_probs, conditional_probs, classes):
 
 def main():
     # Load dataset
-    df_buy_computer = pd.read_csv(r"D:\Data_Mining\project\data\Buys_Computer.csv")
+    df_buy_computer = pd.read_csv(r"D:\IT_HCMUTE\Hoc_ki_6\KHAI_PHA_DU_LIEU\Data_Mining\data\Buys_Computer.csv")
     
     # Calculate probabilities
     prior_probs, conditional_probs, classes = calculate_probabilities(df_buy_computer)
