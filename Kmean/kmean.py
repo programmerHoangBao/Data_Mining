@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import re
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
-
 
 def parse_coordinates(coord_str):
     match = re.match(r'\(([\d.]+),([\d.]+)\)', coord_str)
@@ -12,51 +12,63 @@ def parse_coordinates(coord_str):
     raise ValueError(f"Invalid coordinate format: {coord_str}")
     
 def euclidean_distance(point1, point2):
-    return np.sqrt(np.sum((point1-point2)**2))
+    return np.sqrt(np.sum((point1 - point2) ** 2))
+
+def plot_clusters(points, clusters, centroids, names):
+    plt.figure(figsize=(10, 8))
+    colors = ['r', 'g', 'b']
+    
+    # Plot points
+    for i in range(len(points)):
+        cluster_idx = clusters[i]
+        plt.scatter(points[i, 0], points[i, 1], c=colors[cluster_idx], label=f'Cluster {cluster_idx + 1}' if i == 0 else "")
+        plt.text(points[i, 0], points[i, 1], names[i], fontsize=8)
+    
+    # Plot centroids
+    for i, centroid in enumerate(centroids):
+        plt.scatter(centroid[0], centroid[1], c='black', marker='x', s=200, linewidths=3, label=f'Centroid {i + 1}')
+    
+    plt.title('K-means Clustering Result')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.legend()
+    plt.grid(True)
+    plt.show()  # Hiển thị biểu đồ
 
 def kmeans(points, initial_centroids):
     index = 0
+    clusters = np.zeros(len(points), dtype=int)  # Khởi tạo danh sách clusters
+    initial_centroids = np.array(initial_centroids, dtype=float)
+    
     while True:
-        clusters = []
         print('-------------------------------------------------------------')
         print(f'Lần lập thứ {index}: ')
-        print('Tính khoản cách của các điểm với centroids: ')
-        for i in range(len(points)):
-            distances = []
-            for j in range(len(initial_centroids)):
-                distance = euclidean_distance(points[i], initial_centroids[j])
-                distances.append(distance)
-            print(f'{points[i]}, {distances}')
+        print('Tính khoảng cách của các điểm với centroids: ')
         
-            cluster_idx = 0
-            distance_min = distances[0]
-            for t in range(1, len(distances)):
-                if distance_min > distances[t]:
-                    distance_min = distances[t]
-                    cluster_idx = t
-                    
-            clusters.append(cluster_idx)
-            
+        # Gán các điểm vào cụm gần nhất
+        for i in range(len(points)):
+            distances = [euclidean_distance(points[i], centroid) for centroid in initial_centroids]
+            print(f'{points[i]}, {distances}')
+            clusters[i] = np.argmin(distances)  # Gán điểm vào cụm có khoảng cách nhỏ nhất
+        
         print('Cập nhật lại tâm mới: ')
         new_centroids = np.zeros_like(initial_centroids)
-        for i in range(len(new_centroids)):
-            cluster_points = []
-            for j in range(len(clusters)):
-                if (clusters[j] == i):
-                    cluster_points.append(points[j])
-            new_centroids[i] = np.mean(cluster_points, axis=0)
-            cluster_points_array = np.vstack(cluster_points)
-            print(f'Các điểm thuộc centroid thứ {i}: {cluster_points_array.tolist()}')
-            print(f'Toạ độ điểm centroid mới thứ {i}: {new_centroids[i]}')
-        if (np.all(new_centroids == initial_centroids)):
-            break
-        else:
-            initial_centroids = new_centroids
-        index += 1
+        for i in range(len(initial_centroids)):
+            cluster_points = points[clusters == i]  # Lấy các điểm thuộc cụm i
+            if len(cluster_points) > 0:  # Kiểm tra xem cụm có điểm nào không
+                new_centroids[i] = np.mean(cluster_points, axis=0)
+            else:
+                new_centroids[i] = initial_centroids[i]  # Giữ nguyên centroid nếu cụm rỗng
+            print(f'Các điểm thuộc centroid thứ {i}: {cluster_points.tolist()}')
+            print(f'Tọa độ điểm centroid mới thứ {i}: {new_centroids[i]}')
         
-    return cluster_points, new_centroids
-            
-
+        # Kiểm tra điều kiện dừng
+        if np.all(new_centroids == initial_centroids):
+            break
+        initial_centroids = new_centroids
+        index += 1
+    
+    return clusters, new_centroids  # Trả về danh sách clusters và centroids
 
 def main():
     df = pd.read_csv(r"D:\Data_Mining\project\data\k-mean.csv")
@@ -73,7 +85,8 @@ def main():
     ]
     points = np.array(points)
     initial_centroids = np.array(initial_centroids)
-    kmeans(points, initial_centroids)
+    clusters, centroids = kmeans(points, initial_centroids)
+    plot_clusters(points, clusters, centroids, names)
     
 if __name__ == '__main__':
     main()

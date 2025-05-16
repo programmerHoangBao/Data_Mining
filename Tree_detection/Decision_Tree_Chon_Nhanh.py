@@ -129,7 +129,7 @@ def draw_tree(tree, dot=None, parent=None, edge_label=None, node_counter=None):
     return dot
 
 
-file_path = "D:/IT_HCMUTE/Hoc_ki_6/KHAI_PHA_DU_LIEU/DEMO/Tree_detection/Buys_Computer.csv"
+file_path = r"D:\Data_Mining\project\data\Buys_Computer.csv"
 try:
     data = read_csv(file_path)
 
