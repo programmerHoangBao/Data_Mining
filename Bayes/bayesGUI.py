@@ -57,7 +57,7 @@ def create_gui(df, prior_probs, conditional_probs, classes):
     # Define valid options for each feature (based on typical dataset values)
     options = {
         'age': ['<=30', '31...40', '>40'],
-        'in come': ['high', 'medium', 'low'],
+        'income': ['high', 'medium', 'low'],
         'student': ['yes', 'no'],
         'credit_rating': ['excellent', 'fair']
     }
@@ -65,7 +65,7 @@ def create_gui(df, prior_probs, conditional_probs, classes):
     # Store selected values
     selections = {
         'age': tk.StringVar(value=options['age'][0]),
-        'in come': tk.StringVar(value=options['in come'][0]),
+        'income': tk.StringVar(value=options['income'][0]),
         'student': tk.StringVar(value=options['student'][0]),
         'credit_rating': tk.StringVar(value=options['credit_rating'][0])
     }
@@ -90,7 +90,7 @@ def create_gui(df, prior_probs, conditional_probs, classes):
         # Create instance from selections
         instance = {
             'age': selections['age'].get(),
-            'in come': selections['in come'].get(),
+            'income': selections['income'].get(),
             'student': selections['student'].get(),
             'credit_rating': selections['credit_rating'].get()
         }
