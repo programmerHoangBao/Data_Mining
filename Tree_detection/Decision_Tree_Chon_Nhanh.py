@@ -108,7 +108,7 @@ def draw_tree(tree, dot=None, parent=None, edge_label=None, node_counter=None):
         dot = Digraph(comment='Decision Tree')
         dot.attr(rankdir='LR')
         dot.attr('node', shape='box', style='filled', fillcolor='lightblue')
-        node_counter = [0]  # Danh sách để lưu bộ đếm, cho phép thay đổi giá trị trong hàm đệ quy
+        node_counter = [0]
     
     if isinstance(tree, dict):
         for attr, branches in tree.items():
@@ -160,10 +160,7 @@ try:
     if not all(col in data[0] for col in expected_columns):
         missing_cols = [col for col in expected_columns if col not in data[0]]
         raise KeyError(f"Các cột không khớp. Thiếu cột: {missing_cols}")
-    
-    print("\nBắt đầu xây dựng cây quyết định (chỉ nhánh age > 40 với nút gốc)...")
-    # Build tree with root node, but only for age > 40 branch
-    decision_tree = build_decision_tree(data, attributes, target_col, filter_attr="income", filter_value="high")
+    decision_tree = build_decision_tree(data, attributes, target_col, filter_attr="student", filter_value="no")
     
     print("\nVẽ cây bằng Graphviz...")
     dot = draw_tree(decision_tree)

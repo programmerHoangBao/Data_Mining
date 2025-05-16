@@ -102,12 +102,13 @@ def build_decision_tree(data, attributes, target_col, depth=0):
 def draw_tree(tree, dot=None, parent=None, edge_label=None, node_counter=None):
     if dot is None:
         dot = Digraph(comment='Decision Tree')
-        dot.attr(rankdir='LR')
+        # dot.attr(rankdir='LR')
         dot.attr('node', shape='box', style='filled', fillcolor='lightblue')
         node_counter = [0]  # Danh sách để lưu bộ đếm, cho phép thay đổi giá trị trong hàm đệ quy
     
     if isinstance(tree, dict):
         for attr, branches in tree.items():
+            #Từ điển có cấu trúc {thuộc_tính: {giá_trị: nhánh}}
             node_counter[0] += 1
             node_id = f"node_{node_counter[0]}"  # Tạo node_id duy nhất
             dot.node(node_id, attr)
@@ -151,20 +152,13 @@ try:
 
     print("\nThuộc tính bạn chọn làm cột mục tiêu là:", target_col)
     print(f"Thuộc tính còn lại là: {attributes}")
-
-    expected_columns = attributes + [target_col]
-    if not all(col in data[0] for col in expected_columns):
-        missing_cols = [col for col in expected_columns if col not in data[0]]
-        raise KeyError(f"Các cột không khớp. Thiếu cột: {missing_cols}")
     
     print("\nBắt đầu xây dựng cây quyết định...")
     decision_tree = build_decision_tree(data, attributes, target_col)
     
-    print("\nVẽ cây bằng Graphviz...")
     dot = draw_tree(decision_tree)
     output_path = "decision_tree"
     dot.render(output_path, format='png', cleanup=True)
-    print(f"Đã tạo file hình ảnh: {output_path}.png")
         
 except FileNotFoundError as e:
     print(f"Lỗi: {e}")
